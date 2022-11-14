@@ -554,7 +554,4 @@ Note: For more effective comparison, it is advicible to use the core tmap mappin
 
 -   [Creating Neighbours using sf objects](https://cran.r-project.org/web/packages/spdep/vignettes/nb_sf.html)
 
-```{r echo=FALSE, eval=FALSE}
-library(pagedown)
-pagedown::chrome_print("Hands-on_Ex06-SWsA.html")
-```
+

@@ -10,6 +10,7 @@ book:
     - chap01.qmd
     - chap02.qmd
     - chap03.qmd
+    - chap04.qmd
     - summary.qmd
     - references.qmd
 
