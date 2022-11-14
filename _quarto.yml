@@ -2,12 +2,13 @@ project:
   type: book
 
 book:
-  title: "r4gdsa"
+  title: "R for Geospatial Data Science and Analytics"
   author: "Dr. Kam Tin Seong"
   date: "14/11/2022"
   chapters:
     - index.qmd
     - chap01.qmd
+    - chap02.qmd
     - summary.qmd
     - references.qmd
 
