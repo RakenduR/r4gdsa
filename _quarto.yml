@@ -1,0 +1,23 @@
+project:
+  type: book
+
+book:
+  title: "r4gdsa"
+  author: "Dr. Kam Tin Seong"
+  date: "14/11/2022"
+  chapters:
+    - index.qmd
+    - chap01.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
+
+editor: visual
+
