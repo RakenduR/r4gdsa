@@ -11,13 +11,13 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE)
 ```
 
-
 ## Learning Outcome
 
 In this hands-on exercise, you will learn how to handle geospatial data in R by using **sf** package.
 
 By the end of this hands-on exercise, you should acquire the following competencies:
 
+-   installing and loading [sf](https://r-spatial.github.io/sf/) and [tidyverse](https://www.tidyverse.org/) packages into R environment,
 -   importing geospatial data by using appropriate functions of **sf** package,
 -   importing aspatial data by using appropriate function of **readr** package,
 -   exploring the content of simple feature data frame by using appropriate **Base R** and **sf** functions,
@@ -36,17 +36,15 @@ Data are key to data analytics including geospatial analytics. Hence, before ana
 -   Master Plan 2014 Subzone Boundary (Web) from [data.gov.sg](https://data.gov.sg/)
 -   Pre-Schools Location from [data.gov.sg](https://data.gov.sg/)
 -   Cycling Path from [LTADataMall](https://www.mytransport.sg/content/mytransport/home/dataMall.html)
--   Singapore Airbnb listing data, 19 July 2021 from [Inside Airbnb](http://insideairbnb.com/get-the-data.html)
+-   Latest version of Singapore Airbnb listing data from [Inside Airbnb](http://insideairbnb.com/get-the-data.html)
 
 > Note: The purpose of this section is not merely extracting the necessary data sets. It also aims to introduce you to public available data sets. Students are encouraged to explore the rest of the available data sets in these three data sources.
 
 ### Extracting the geospatial data sets
 
-Next, at the `Hands-on_Ex02` folder, create a sub-folder called `data`. Then, inside the `data` sub-folder, create two sub-folders and name them `geospatial` and `aspatial` respectively.
+Next, at the `Hands-on_Ex01` folder, create a sub-folder called `data`. Then, inside the `data` sub-folder, create two sub-folders and name them `geospatial` and `aspatial` respectively.
 
-Place `Master Plan 2014 Subzone Boundary (Web)`, `Pre-Schools Location` and `Cycling Path` zipped files into `geospatial` sub-folder and unzipped them. Copy the unzipped files from their respective sub-folders and place them inside `geospatial` sub-folder. The file listing in `geospatial` sub-folder `should` look similar to the screenshot below.
-
-![](chap01/img/image1.jpg)
+Place `Master Plan 2014 Subzone Boundary (Web)`, `Pre-Schools Location` and `Cycling Path` zipped files into `geospatial` sub-folder and unzipped them. Copy the unzipped files from their respective sub-folders and place them inside `geospatial` sub-folder. 
 
 ### Extracting the aspatial data set
 
@@ -70,20 +68,12 @@ Tidyverse consists of a family of R packages. In this hands-on exercise, the fol
 Type the following code chunk.
 
 ```{r}
-packages = c('sf', 'tidyverse')
-for (p in packages){
-  if(!require(p, character.only = T)){
-    install.packages(p)
-  }
-  library(p,character.only = T)
-}
+pacman::p_load(sf, tidyverse)
 ```
 
 What we can learn from the code chunk above:
 
--   A packaging list call `packages` will be created. It consists of all the R packages required to accomplish this hands-on exercise.
--   Next, the code chunk will check if the R packages on `package` have been installed in R. If they have yet been installed, they will be installed.
--   After all the R packages have been installed, they will be launched in RStudio environment.
+-   [`p_load`](https://cran.r-project.org/web/packages/pacman/pacman.pdf) function pf [**pacman**](https://github.com/trinker/pacman) package is used to install and load sf and tidyverse pacages into R environment. 
 
 ## Importing Geospatial Data
 
@@ -110,7 +100,7 @@ The code chunk below uses *st_read()* function of **sf** package to import `Cycl
 
 ```{r}
 cyclingpath = st_read(dsn = "chap01/data/geospatial", 
-                         layer = "CyclingPath")
+                         layer = "CyclingPathGazette")
 ```
 
 The message above reveals that there are a total of 1625 features and 2 fields in `cyclingpath` linestring feature data frame and it is in **svy21** projected coordinates system too.

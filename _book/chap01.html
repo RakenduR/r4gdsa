@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2022-11-14">
+<meta name="dcterms.date" content="2022-11-17">
 
 <title>R for Geospatial Data Science and Analytics - 1&nbsp; Geospatial Data Wrangling with R</title>
 <style>
@@ -261,7 +261,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 14, 2022</p>
+      <p class="date">November 17, 2022</p>
     </div>
   </div>
     
@@ -275,6 +275,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>In this hands-on exercise, you will learn how to handle geospatial data in R by using <strong>sf</strong> package.</p>
 <p>By the end of this hands-on exercise, you should acquire the following competencies:</p>
 <ul>
+<li>installing and loading <a href="https://r-spatial.github.io/sf/">sf</a> and <a href="https://www.tidyverse.org/">tidyverse</a> packages into R environment,</li>
 <li>importing geospatial data by using appropriate functions of <strong>sf</strong> package,</li>
 <li>importing aspatial data by using appropriate function of <strong>readr</strong> package,</li>
 <li>exploring the content of simple feature data frame by using appropriate <strong>Base R</strong> and <strong>sf</strong> functions,</li>
@@ -295,16 +296,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Master Plan 2014 Subzone Boundary (Web) from <a href="https://data.gov.sg/">data.gov.sg</a></li>
 <li>Pre-Schools Location from <a href="https://data.gov.sg/">data.gov.sg</a></li>
 <li>Cycling Path from <a href="https://www.mytransport.sg/content/mytransport/home/dataMall.html">LTADataMall</a></li>
-<li>Singapore Airbnb listing data, 19 July 2021 from <a href="http://insideairbnb.com/get-the-data.html">Inside Airbnb</a></li>
+<li>Latest version of Singapore Airbnb listing data from <a href="http://insideairbnb.com/get-the-data.html">Inside Airbnb</a></li>
 </ul>
 <blockquote class="blockquote">
 <p>Note: The purpose of this section is not merely extracting the necessary data sets. It also aims to introduce you to public available data sets. Students are encouraged to explore the rest of the available data sets in these three data sources.</p>
 </blockquote>
 <section id="extracting-the-geospatial-data-sets" class="level3" data-number="1.2.1">
 <h3 data-number="1.2.1" class="anchored" data-anchor-id="extracting-the-geospatial-data-sets"><span class="header-section-number">1.2.1</span> Extracting the geospatial data sets</h3>
-<p>Next, at the <code>Hands-on_Ex02</code> folder, create a sub-folder called <code>data</code>. Then, inside the <code>data</code> sub-folder, create two sub-folders and name them <code>geospatial</code> and <code>aspatial</code> respectively.</p>
-<p>Place <code>Master Plan 2014 Subzone Boundary (Web)</code>, <code>Pre-Schools Location</code> and <code>Cycling Path</code> zipped files into <code>geospatial</code> sub-folder and unzipped them. Copy the unzipped files from their respective sub-folders and place them inside <code>geospatial</code> sub-folder. The file listing in <code>geospatial</code> sub-folder <code>should</code> look similar to the screenshot below.</p>
-<p><img src="chap01/img/image1.jpg" class="img-fluid"></p>
+<p>Next, at the <code>Hands-on_Ex01</code> folder, create a sub-folder called <code>data</code>. Then, inside the <code>data</code> sub-folder, create two sub-folders and name them <code>geospatial</code> and <code>aspatial</code> respectively.</p>
+<p>Place <code>Master Plan 2014 Subzone Boundary (Web)</code>, <code>Pre-Schools Location</code> and <code>Cycling Path</code> zipped files into <code>geospatial</code> sub-folder and unzipped them. Copy the unzipped files from their respective sub-folders and place them inside <code>geospatial</code> sub-folder.</p>
 </section>
 <section id="extracting-the-aspatial-data-set" class="level3" data-number="1.2.2">
 <h3 data-number="1.2.2" class="anchored" data-anchor-id="extracting-the-aspatial-data-set"><span class="header-section-number">1.2.2</span> Extracting the aspatial data set</h3>
@@ -328,19 +328,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Type the following code chunk.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>packages <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'sf'</span>, <span class="st">'tidyverse'</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (p <span class="cf">in</span> packages){</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(p, <span class="at">character.only =</span> T)){</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(p)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(p,<span class="at">character.only =</span> T)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>What we can learn from the code chunk above:</p>
 <ul>
-<li>A packaging list call <code>packages</code> will be created. It consists of all the R packages required to accomplish this hands-on exercise.</li>
-<li>Next, the code chunk will check if the R packages on <code>package</code> have been installed in R. If they have yet been installed, they will be installed.</li>
-<li>After all the R packages have been installed, they will be launched in RStudio environment.</li>
+<li><a href="https://cran.r-project.org/web/packages/pacman/pacman.pdf"><code>p_load</code></a> function pf <a href="https://github.com/trinker/pacman"><strong>pacman</strong></a> package is used to install and load sf and tidyverse pacages into R environment.</li>
 </ul>
 </section>
 <section id="importing-geospatial-data" class="level2" data-number="1.4">
@@ -374,14 +366,14 @@ Projected CRS: SVY21</code></pre>
 <p>The code chunk below uses <em>st_read()</em> function of <strong>sf</strong> package to import <code>CyclingPath</code> shapefile into R as line feature data frame.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cyclingpath <span class="ot">=</span> <span class="fu">st_read</span>(<span class="at">dsn =</span> <span class="st">"chap01/data/geospatial"</span>, </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">layer =</span> <span class="st">"CyclingPath"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                         <span class="at">layer =</span> <span class="st">"CyclingPathGazette"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Reading layer `CyclingPath' from data source 
+<pre><code>Reading layer `CyclingPathGazette' from data source 
   `D:\tskam\r4gdsa\chap01\data\geospatial' using driver `ESRI Shapefile'
-Simple feature collection with 1625 features and 2 fields
-Geometry type: LINESTRING
+Simple feature collection with 2248 features and 2 fields
+Geometry type: MULTILINESTRING
 Dimension:     XY
-Bounding box:  xmin: 12711.19 ymin: 28711.33 xmax: 42626.09 ymax: 48948.15
+Bounding box:  xmin: 11854.32 ymin: 28347.98 xmax: 42626.09 ymax: 48948.15
 Projected CRS: SVY21</code></pre>
 </div>
 </div>
@@ -763,7 +755,7 @@ $ geometry                       &lt;POINT [m]&gt; POINT (22646.02 35167.9), POI
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(buffer_cycling<span class="sc">$</span>AREA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>773143.9 [m^2]</code></pre>
+<pre><code>1556978 [m^2]</code></pre>
 </div>
 </div>
 <p><strong>Mission Accomplished!</strong></p>
