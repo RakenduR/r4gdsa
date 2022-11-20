@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Dr.&nbsp;Kam Tin Seong, Associate Professor of Information Systems (Practice)">
-<meta name="dcterms.date" content="2022-11-17">
+<meta name="dcterms.date" content="2022-11-21">
 
 <title>R for Geospatial Data Science and Analytics - 3&nbsp; Spatial Weights and Applications</title>
 <style>
@@ -268,7 +268,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 17, 2022</p>
+      <p class="date">November 21, 2022</p>
     </div>
   </div>
     
@@ -299,13 +299,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="getting-started"><span class="header-section-number">3.2.1</span> Getting Started</h3>
 <p>Before we get started, we need to ensure that <strong>spdep</strong>, <strong>sf</strong>, <strong>tmap</strong> and <strong>tidyverse</strong> packages of R are currently installed in your R.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>packages <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'sf'</span>, <span class="st">'spdep'</span>, <span class="st">'tmap'</span>, <span class="st">'tidyverse'</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (p <span class="cf">in</span> packages){</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="sc">!</span><span class="fu">require</span>(p, <span class="at">character.only =</span> T)){</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">install.packages</span>(p)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">library</span>(p,<span class="at">character.only =</span> T)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, spdep, tmap, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
@@ -1608,20 +1602,35 @@ W 88 7744 88 37.86334 365.9147</code></pre>
 </div>
 <p>Next, we will convert the lag variable listw object into a data.frame by using <em>as.data.frame()</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>lag.list.knn6a <span class="ot">&lt;-</span> <span class="fu">list</span>(hunan<span class="sc">$</span>NAME_3, <span class="fu">lag.listw</span>(wm_knn6a, hunan<span class="sc">$</span>GDPPC))</span>
-<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>lag_knn6a.res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(lag.list.knn6a)</span>
-<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(lag_knn6a.res) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NAME_3"</span>, <span class="st">"lag_window_avg GDPPC"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>lag.list.wm_q1 <span class="ot">&lt;-</span> <span class="fu">list</span>(hunan<span class="sc">$</span>NAME_3, <span class="fu">lag.listw</span>(wm_q1, hunan<span class="sc">$</span>GDPPC))</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a>lag_wm_q1.res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(lag.list.wm_q1)</span>
+<span id="cb82-3"><a href="#cb82-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(lag_wm_q1.res) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NAME_3"</span>, <span class="st">"lag_window_avg GDPPC"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>Note: The third command line on the code chunk above renames the field names of <em>lag_wm_q1.res</em> object into <em>NAME_3</em> and <em>lag_window_avg GDPPC</em> respectively.</p>
+<p>Next, the code chunk below will be used to append <em>lag_window_avg GDPPC</em> values onto <em>hunan</em> sf data.frame by using <em>left_join()</em> of <strong>dplyr</strong> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>hunan <span class="ot">&lt;-</span> <span class="fu">left_join</span>(hunan, lag_wm_q1.res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Lastly, <em>qtm()</em> of <strong>tmap</strong> package is used to plot the GDPPC and lag_window_avg GDPPC map next to each other for quick comparison.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a>gdppc <span class="ot">&lt;-</span> <span class="fu">qtm</span>(hunan, <span class="st">"GDPPC"</span>)</span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>w_avg_gdppc <span class="ot">&lt;-</span> <span class="fu">qtm</span>(hunan, <span class="st">"lag_window_avg GDPPC"</span>)</span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(gdppc, w_avg_gdppc, <span class="at">asp=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="chap03_files/figure-html/unnamed-chunk-53-1.png" class="img-fluid" width="1152"></p>
+</div>
+</div>
+<p>Note: For more effective comparison, it is advicible to use the core tmap mapping functions.</p>
 </section>
 <section id="spatial-window-sum" class="level3" data-number="3.8.4">
 <h3 data-number="3.8.4" class="anchored" data-anchor-id="spatial-window-sum"><span class="header-section-number">3.8.4</span> Spatial window sum</h3>
 <p>The spatial window sum is the counter part of the window average, but without using row-standardized weights. To do this we assign binary weights to the neighbor structure that includes the diagonal element.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>wm_q1 <span class="ot">&lt;-</span> wm_q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>wm_q1 <span class="ot">&lt;-</span> wm_q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To add the diagonal element to the neighbour list, we just need to use <em>include.self()</em> from <strong>spdep</strong>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="fu">include.self</span>(wm_q1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a><span class="fu">include.self</span>(wm_q1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Neighbour list object:
 Number of regions: 88 
@@ -1629,7 +1638,7 @@ Number of nonzero links: 536
 Percentage nonzero weights: 6.921488 
 Average number of links: 6.090909 </code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb86"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1"><a href="#cb86-1" aria-hidden="true" tabindex="-1"></a>wm_q1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>wm_q1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Neighbour list object:
 Number of regions: 88 
@@ -1640,8 +1649,8 @@ Average number of links: 5.090909 </code></pre>
 </div>
 <p>Next, we will assign binary weights to the neighbour structure that includes the diagonal element.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>b_weights <span class="ot">&lt;-</span> <span class="fu">lapply</span>(wm_q1, <span class="cf">function</span>(x) <span class="dv">0</span><span class="sc">*</span>x <span class="sc">+</span> <span class="dv">1</span>)</span>
-<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a>b_weights[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>b_weights <span class="ot">&lt;-</span> <span class="fu">lapply</span>(wm_q1, <span class="cf">function</span>(x) <span class="dv">0</span><span class="sc">*</span>x <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>b_weights[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
 [1] 1 1 1 1 1</code></pre>
@@ -1649,10 +1658,10 @@ Average number of links: 5.090909 </code></pre>
 </div>
 <p>Again, we use <em>nb2listw()</em> and <em>glist()</em> to explicitly assign weight values.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a>b_weights2 <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(wm_q1, </span>
-<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">glist =</span> b_weights, </span>
-<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">style =</span> <span class="st">"B"</span>)</span>
-<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>b_weights2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>b_weights2 <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(wm_q1, </span>
+<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>                       <span class="at">glist =</span> b_weights, </span>
+<span id="cb92-3"><a href="#cb92-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">style =</span> <span class="st">"B"</span>)</span>
+<span id="cb92-4"><a href="#cb92-4" aria-hidden="true" tabindex="-1"></a>b_weights2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Characteristics of weights list object:
 Neighbour list object:
@@ -1669,8 +1678,8 @@ B 88 7744 448 896 10224</code></pre>
 </div>
 <p>With our new weight structure, we can compute the lag variable with <em>lag.listw()</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb92"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><a href="#cb92-1" aria-hidden="true" tabindex="-1"></a>w_sum_gdppc <span class="ot">&lt;-</span> <span class="fu">list</span>(hunan<span class="sc">$</span>NAME_3, <span class="fu">lag.listw</span>(b_weights2, hunan<span class="sc">$</span>GDPPC))</span>
-<span id="cb92-2"><a href="#cb92-2" aria-hidden="true" tabindex="-1"></a>w_sum_gdppc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>w_sum_gdppc <span class="ot">&lt;-</span> <span class="fu">list</span>(hunan<span class="sc">$</span>NAME_3, <span class="fu">lag.listw</span>(b_weights2, hunan<span class="sc">$</span>GDPPC))</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a>w_sum_gdppc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[[1]]
  [1] "Anxiang"       "Hanshou"       "Jinshi"        "Li"           
@@ -1710,21 +1719,21 @@ B 88 7744 448 896 10224</code></pre>
 </div>
 <p>Next, we will convert the lag variable listw object into a data.frame by using <em>as.data.frame()</em>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>w_sum_gdppc.res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(w_sum_gdppc)</span>
-<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(w_sum_gdppc.res) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NAME_3"</span>, <span class="st">"w_sum GDPPC"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>w_sum_gdppc.res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(w_sum_gdppc)</span>
+<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(w_sum_gdppc.res) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"NAME_3"</span>, <span class="st">"w_sum GDPPC"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Note: The second command line on the code chunk above renames the field names of <em>w_sum_gdppc.res</em> object into <em>NAME_3</em> and <em>w_sum GDPPC</em> respectively.</p>
 <p>Next, the code chunk below will be used to append <em>w_sum GDPPC</em> values onto <em>hunan</em> sf data.frame by using <em>left_join()</em> of <strong>dplyr</strong> package.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a>hunan <span class="ot">&lt;-</span> <span class="fu">left_join</span>(hunan, w_sum_gdppc.res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a>hunan <span class="ot">&lt;-</span> <span class="fu">left_join</span>(hunan, w_sum_gdppc.res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Lastly, <em>qtm()</em> of <strong>tmap</strong> package is used to plot the GDPPC and lag_sum GDPPC map next to each other for quick comparison.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb96"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb96-1"><a href="#cb96-1" aria-hidden="true" tabindex="-1"></a>gdppc <span class="ot">&lt;-</span> <span class="fu">qtm</span>(hunan, <span class="st">"GDPPC"</span>)</span>
-<span id="cb96-2"><a href="#cb96-2" aria-hidden="true" tabindex="-1"></a>w_sum_gdppc <span class="ot">&lt;-</span> <span class="fu">qtm</span>(hunan, <span class="st">"w_sum GDPPC"</span>)</span>
-<span id="cb96-3"><a href="#cb96-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(gdppc, w_sum_gdppc, <span class="at">asp=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb98"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb98-1"><a href="#cb98-1" aria-hidden="true" tabindex="-1"></a>gdppc <span class="ot">&lt;-</span> <span class="fu">qtm</span>(hunan, <span class="st">"GDPPC"</span>)</span>
+<span id="cb98-2"><a href="#cb98-2" aria-hidden="true" tabindex="-1"></a>w_sum_gdppc <span class="ot">&lt;-</span> <span class="fu">qtm</span>(hunan, <span class="st">"w_sum GDPPC"</span>)</span>
+<span id="cb98-3"><a href="#cb98-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(gdppc, w_sum_gdppc, <span class="at">asp=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="chap03_files/figure-html/unnamed-chunk-59-1.png" class="img-fluid" width="1152"></p>
+<p><img src="chap03_files/figure-html/unnamed-chunk-61-1.png" class="img-fluid" width="1152"></p>
 </div>
 </div>
 <p>Note: For more effective comparison, it is advicible to use the core tmap mapping functions.</p>

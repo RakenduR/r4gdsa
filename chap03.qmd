@@ -32,13 +32,7 @@ Two data sets will be used in this hands-on exercise, they are:
 Before we get started, we need to ensure that **spdep**, **sf**, **tmap** and **tidyverse** packages of R are currently installed in your R.
 
 ```{r echo=TRUE, eval=TRUE, message=FALSE, warning=FALSE}
-packages = c('sf', 'spdep', 'tmap', 'tidyverse')
-for (p in packages){
-  if(!require(p, character.only = T)){
-    install.packages(p)
-  }
-  library(p,character.only = T)
-}
+pacman::p_load(sf, spdep, tmap, tidyverse)
 ```
 
 ## Getting the Data Into R Environment
@@ -480,11 +474,30 @@ lag_w_avg_gpdpc
 
 Next, we will convert the lag variable listw object into a data.frame by using *as.data.frame()*.
 
-```{r eval=FALSE}
-lag.list.knn6a <- list(hunan$NAME_3, lag.listw(wm_knn6a, hunan$GDPPC))
-lag_knn6a.res <- as.data.frame(lag.list.knn6a)
-colnames(lag_knn6a.res) <- c("NAME_3", "lag_window_avg GDPPC")
+```{r}
+lag.list.wm_q1 <- list(hunan$NAME_3, lag.listw(wm_q1, hunan$GDPPC))
+lag_wm_q1.res <- as.data.frame(lag.list.wm_q1)
+colnames(lag_wm_q1.res) <- c("NAME_3", "lag_window_avg GDPPC")
 ```
+
+Note: The third command line on the code chunk above renames the field names of *lag_wm_q1.res* object into *NAME_3* and *lag_window_avg GDPPC* respectively.
+
+Next, the code chunk below will be used to append *lag_window_avg GDPPC* values onto *hunan* sf data.frame by using *left_join()* of **dplyr** package.
+
+```{r}
+hunan <- left_join(hunan, lag_wm_q1.res)
+```
+
+Lastly, *qtm()* of **tmap** package is used to plot the GDPPC and lag_window_avg GDPPC map next to each other for quick comparison.
+
+```{r fig.width=12, fig.height=8}
+gdppc <- qtm(hunan, "GDPPC")
+w_avg_gdppc <- qtm(hunan, "lag_window_avg GDPPC")
+tmap_arrange(gdppc, w_avg_gdppc, asp=1, ncol=2)
+```
+
+Note: For more effective comparison, it is advicible to use the core tmap mapping functions.
+
 
 ### Spatial window sum
 
@@ -553,5 +566,3 @@ Note: For more effective comparison, it is advicible to use the core tmap mappin
 ## References
 
 -   [Creating Neighbours using sf objects](https://cran.r-project.org/web/packages/spdep/vignettes/nb_sf.html)
-
-
