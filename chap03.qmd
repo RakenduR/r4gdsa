@@ -1,7 +1,5 @@
 ---
 title: "Spatial Weights and Applications"
-author:
-  - name: Dr. Kam Tin Seong, Associate Professor of Information Systems (Practice) 
 date: "`r Sys.Date()`"
 format: html
 ---
@@ -497,7 +495,6 @@ tmap_arrange(gdppc, w_avg_gdppc, asp=1, ncol=2)
 ```
 
 Note: For more effective comparison, it is advicible to use the core tmap mapping functions.
-
 
 ### Spatial window sum
 
