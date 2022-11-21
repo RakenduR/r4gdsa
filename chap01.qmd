@@ -44,7 +44,7 @@ Data are key to data analytics including geospatial analytics. Hence, before ana
 
 Next, at the `Hands-on_Ex01` folder, create a sub-folder called `data`. Then, inside the `data` sub-folder, create two sub-folders and name them `geospatial` and `aspatial` respectively.
 
-Place `Master Plan 2014 Subzone Boundary (Web)`, `Pre-Schools Location` and `Cycling Path` zipped files into `geospatial` sub-folder and unzipped them. Copy the unzipped files from their respective sub-folders and place them inside `geospatial` sub-folder. 
+Place `Master Plan 2014 Subzone Boundary (Web)`, `Pre-Schools Location` and `Cycling Path` zipped files into `geospatial` sub-folder and unzipped them. Copy the unzipped files from their respective sub-folders and place them inside `geospatial` sub-folder.
 
 ### Extracting the aspatial data set
 
@@ -73,7 +73,7 @@ pacman::p_load(sf, tidyverse)
 
 What we can learn from the code chunk above:
 
--   [`p_load`](https://cran.r-project.org/web/packages/pacman/pacman.pdf) function pf [**pacman**](https://github.com/trinker/pacman) package is used to install and load sf and tidyverse pacages into R environment. 
+-   [`p_load`](https://cran.r-project.org/web/packages/pacman/pacman.pdf) function pf [**pacman**](https://github.com/trinker/pacman) package is used to install and load sf and tidyverse pacages into R environment.
 
 ## Importing Geospatial Data
 
@@ -395,7 +395,7 @@ ggplot(data=mpsz3414,
 
 The solution:
 
-```{r echo=FALSE, fig.width=5, fig.height=5}
+```{r}
 ggplot(data=mpsz3414, 
        aes(y = `PreSch Count`, 
            x= as.numeric(`PreSch Density`)))+
@@ -408,7 +408,4 @@ ggplot(data=mpsz3414,
       y = "Pre-school count")
 ```
 
-```{r echo=FALSE, eval=FALSE}
-library(pagedown)
-pagedown::chrome_print("Hands-on_Ex02.html")
-```
+
