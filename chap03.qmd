@@ -2,11 +2,11 @@
 title: "Spatial Weights and Applications"
 date: "`r Sys.Date()`"
 format: html
+execute:
+  warning: false
+  message: false
+  fig-retine: 3
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=TRUE, message=FALSE, warning = FALSE, fig.retina=3)
-```
 
 ## Overview
 
