@@ -59,7 +59,8 @@ hunan2012 <- read_csv("chap03/data/aspatial/Hunan_2012.csv")
 The code chunk below will be used to update the attribute table of *hunan*'s SpatialPolygonsDataFrame with the attribute fields of *hunan2012* dataframe. This is performed by using *left_join()* of **dplyr** package.
 
 ```{r}
-hunan <- left_join(hunan,hunan2012)
+hunan <- left_join(hunan,hunan2012)%>%
+  select(1:4, 7, 15)
 ```
 
 ## Visualising Regional Development Indicator
@@ -324,13 +325,13 @@ rswm_q
 
 The zero.policy=TRUE option allows for lists of non-neighbors. This should be used with caution since the user may not be aware of missing neighbors in their dataset however, a zero.policy of FALSE would return an error.
 
-To see the weight of the first polygon's four neighbors type:
+To see the weight of the first polygon's eight neighbors type:
 
 ```{r}
 rswm_q$weights[10]
 ```
 
-Each neighbor is assigned a 0.2 of the total weight. This means that when R computes the average neighboring income values, each neighbor's income will be multiplied by 0.2 before being tallied.
+Each neighbor is assigned a 0.125 of the total weight. This means that when R computes the average neighboring income values, each neighbor's income will be multiplied by 0.2 before being tallied.
 
 Using the same method, we can also derive a row standardised distance weight matrix by using the code chunk below.
 
@@ -353,7 +354,8 @@ In this section, you will learn how to create four different spatial lagged vari
 
 -   spatial lag with row-standardized weights,
 -   spatial lag as a sum of neighbouring values,
--   spatial window average, and spatial window sum.
+-   spatial window average, and 
+-   spatial window sum.
 
 ### Spatial lag with row-standardized weights
 

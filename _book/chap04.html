@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2022-11-25">
+<meta name="dcterms.date" content="2022-11-27">
 
 <title>R for Geospatial Data Science and Analytics - 4&nbsp; Global and Local Measures of Spatial Autocorrelation</title>
 <style>
@@ -276,7 +276,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">November 25, 2022</p>
+      <p class="date">November 27, 2022</p>
     </div>
   </div>
     
@@ -918,7 +918,8 @@ Zixing        -7.6849e-01 -8.8210e-02  9.4057e-01 -7.0144e-01         0.4830</co
 <h3 data-number="4.7.2" class="anchored" data-anchor-id="plotting-moran-scatterplot-with-standardised-variable"><span class="header-section-number">4.7.2</span> Plotting Moran scatterplot with standardised variable</h3>
 <p>First we will use <a href="https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/scale"><em>scale()</em></a> to centers and scales the variable. Here centering is done by subtracting the mean (omitting NAs) the corresponding columns, and scaling is done by dividing the (centered) variable by their standard deviations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>hunan<span class="sc">$</span>Z.GDPPC <span class="ot">&lt;-</span> <span class="fu">scale</span>(hunan<span class="sc">$</span>GDPPC) <span class="sc">%&gt;%</span> as.vector </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>hunan<span class="sc">$</span>Z.GDPPC <span class="ot">&lt;-</span> <span class="fu">scale</span>(hunan<span class="sc">$</span>GDPPC) <span class="sc">%&gt;%</span> </span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>  as.vector </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <a href="https://www.rdocumentation.org/packages/pbdDMAT/versions/0.5-1/topics/as.vector"><em>as.vector()</em></a> added to the end is to make sure that the data type we get out of this is a vector, that map neatly into out dataframe.</p>
 <p>Now, we are ready to plot the Moran scatterplot again by using the code chunk below.</p>
@@ -938,9 +939,10 @@ Zixing        -7.6849e-01 -8.8210e-02  9.4057e-01 -7.0144e-01         0.4830</co
 <div class="cell">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>quadrant <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode=</span><span class="st">"numeric"</span>,<span class="at">length=</span><span class="fu">nrow</span>(localMI))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Next, we centers the variable of interest around its mean.</p>
+<p>Next, derives the spatially lagged variable of interest (i.e.&nbsp;GDPPC) and centers the spatially lagged variable around its mean.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>DV <span class="ot">&lt;-</span> hunan<span class="sc">$</span>GDPPC <span class="sc">-</span> <span class="fu">mean</span>(hunan<span class="sc">$</span>GDPPC)     </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>hunan<span class="sc">$</span>lag_GDPPC <span class="ot">&lt;-</span> <span class="fu">lag.listw</span>(rswm_q, hunan<span class="sc">$</span>GDPPC)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>DV <span class="ot">&lt;-</span> hunan<span class="sc">$</span>GDPPC <span class="sc">-</span> <span class="fu">mean</span>(hunan<span class="sc">$</span>GDPPC)     </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This is follow by centering the local Moran’s around the mean.</p>
 <div class="cell">
@@ -953,9 +955,9 @@ Zixing        -7.6849e-01 -8.8210e-02  9.4057e-01 -7.0144e-01         0.4830</co
 <p>These four command lines define the high-high, low-low, low-high and high-low categories.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&gt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">4</span>      </span>
-<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&lt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">2</span>      </span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&lt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">3</span>      </span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&gt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&lt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&lt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Lastly, places non-significant Moran in the category 0.</p>
 <div class="cell">
@@ -964,14 +966,15 @@ Zixing        -7.6849e-01 -8.8210e-02  9.4057e-01 -7.0144e-01         0.4830</co
 <p>In fact, we can combined all the steps into one single code chunk as shown below:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>quadrant <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="at">mode=</span><span class="st">"numeric"</span>,<span class="at">length=</span><span class="fu">nrow</span>(localMI))</span>
-<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>DV <span class="ot">&lt;-</span> hunan<span class="sc">$</span>GDPPC <span class="sc">-</span> <span class="fu">mean</span>(hunan<span class="sc">$</span>GDPPC)     </span>
-<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>C_mI <span class="ot">&lt;-</span> localMI[,<span class="dv">1</span>] <span class="sc">-</span> <span class="fu">mean</span>(localMI[,<span class="dv">1</span>])    </span>
-<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>signif <span class="ot">&lt;-</span> <span class="fl">0.05</span>       </span>
-<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&gt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">4</span>      </span>
-<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&lt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">2</span>      </span>
-<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&gt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
-<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&lt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">3</span></span>
-<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>quadrant[localMI[,<span class="dv">5</span>]<span class="sc">&gt;</span>signif] <span class="ot">&lt;-</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>hunan<span class="sc">$</span>lag_GDPPC <span class="ot">&lt;-</span> <span class="fu">lag.listw</span>(rswm_q, hunan<span class="sc">$</span>GDPPC)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>DV <span class="ot">&lt;-</span> hunan<span class="sc">$</span>lag_GDPPC <span class="sc">-</span> <span class="fu">mean</span>(hunan<span class="sc">$</span>lag_GDPPC)     </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>C_mI <span class="ot">&lt;-</span> localMI[,<span class="dv">1</span>] <span class="sc">-</span> <span class="fu">mean</span>(localMI[,<span class="dv">1</span>], <span class="at">na.rm =</span> <span class="cn">TRUE</span>)    </span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>signif <span class="ot">&lt;-</span> <span class="fl">0.05</span>       </span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&gt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">4</span>      </span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&lt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">3</span>      </span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&lt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&gt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>quadrant[DV <span class="sc">&gt;</span><span class="dv">0</span> <span class="sc">&amp;</span> C_mI<span class="sc">&lt;</span><span class="dv">0</span>] <span class="ot">&lt;-</span> <span class="dv">2</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>quadrant[localMI[,<span class="dv">5</span>]<span class="sc">&gt;</span>signif] <span class="ot">&lt;-</span> <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="plotting-lisa-map" class="level3" data-number="4.7.4">
@@ -1012,9 +1015,16 @@ Zixing        -7.6849e-01 -8.8210e-02  9.4057e-01 -7.0144e-01         0.4830</co
 <span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_view</span>(<span class="at">set.zoom.limits =</span> <span class="fu">c</span>(<span class="dv">11</span>,<span class="dv">17</span>)) <span class="sc">+</span></span>
 <span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tm_borders</span>(<span class="at">alpha=</span><span class="fl">0.5</span>)</span>
 <span id="cb58-15"><a href="#cb58-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(gdppc, LISAmap, <span class="at">asp=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb58-16"><a href="#cb58-16" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(gdppc, LISAmap, </span>
+<span id="cb58-17"><a href="#cb58-17" aria-hidden="true" tabindex="-1"></a>             <span class="at">asp=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="chap04_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid" width="1152"></p>
+</div>
+</div>
+<p>We can also include the local Moran’s I map and p-value map as shown below for easy comparison.</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="chap04_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid" width="1152"></p>
 </div>
 </div>
 <blockquote class="blockquote">
@@ -1236,7 +1246,7 @@ attr(,"class")
 <span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a><span class="fu">tmap_arrange</span>(gdppc, Gimap, <span class="at">asp=</span><span class="dv">1</span>, <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="chap04_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid" width="1152"></p>
+<p><img src="chap04_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid" width="1152"></p>
 </div>
 </div>
 <blockquote class="blockquote">
@@ -1272,7 +1282,7 @@ attr(,"class")
 <span id="cb77-12"><a href="#cb77-12" aria-hidden="true" tabindex="-1"></a>             <span class="at">asp=</span><span class="dv">1</span>, </span>
 <span id="cb77-13"><a href="#cb77-13" aria-hidden="true" tabindex="-1"></a>             <span class="at">ncol=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="chap04_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid" width="1152"></p>
+<p><img src="chap04_files/figure-html/unnamed-chunk-49-1.png" class="img-fluid" width="1152"></p>
 </div>
 </div>
 <blockquote class="blockquote">
