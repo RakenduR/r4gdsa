@@ -445,7 +445,7 @@ This is follow by centering the local Moran's around the mean.
 
 ```{r}
 #| eval: false
-C_mI <- localMI[,1] - mean(localMI[,1])    
+LM_I <- localMI[,1] - mean(localMI[,1])    
 ```
 
 Next, we will set a statistical significance level for the local Moran.
@@ -459,10 +459,10 @@ These four command lines define the low-low (1), low-high (2), high-low (3) and 
 
 ```{r}
 #| eval: false
-quadrant[DV <0 & C_mI>0] <- 1
-quadrant[DV >0 & C_mI<0] <- 2
-quadrant[DV <0 & C_mI<0] <- 3  
-quadrant[DV >0 & C_mI>0] <- 4      
+quadrant[DV <0 & LM_I>0] <- 1
+quadrant[DV >0 & LM_I<0] <- 2
+quadrant[DV <0 & LM_I<0] <- 3  
+quadrant[DV >0 & LM_I>0] <- 4      
 ```
 
 Lastly, places non-significant Moran in the category 0.
@@ -478,12 +478,12 @@ In fact, we can combined all the steps into one single code chunk as shown below
 quadrant <- vector(mode="numeric",length=nrow(localMI))
 hunan$lag_GDPPC <- lag.listw(rswm_q, hunan$GDPPC)
 DV <- hunan$lag_GDPPC - mean(hunan$lag_GDPPC)     
-C_mI <- localMI[,1] - mean(localMI[,1], na.rm = TRUE)    
+LM_I <- localMI[,1]   
 signif <- 0.05       
-quadrant[DV <0 & C_mI>0] <- 1
-quadrant[DV >0 & C_mI<0] <- 2
-quadrant[DV <0 & C_mI<0] <- 3  
-quadrant[DV >0 & C_mI>0] <- 4    
+quadrant[DV <0 & LM_I>0] <- 1
+quadrant[DV >0 & LM_I<0] <- 2
+quadrant[DV <0 & LM_I<0] <- 3  
+quadrant[DV >0 & LM_I>0] <- 4    
 quadrant[localMI[,5]>signif] <- 0
 ```
 
