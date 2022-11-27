@@ -438,7 +438,7 @@ Next, derives the spatially lagged variable of interest (i.e. GDPPC) and centers
 ```{r}
 #| eval: false
 hunan$lag_GDPPC <- lag.listw(rswm_q, hunan$GDPPC)
-DV <- hunan$GDPPC - mean(hunan$GDPPC)     
+DV <- hunan$lag_GDPPC - mean(hunan$lag_GDPPC)     
 ```
 
 This is follow by centering the local Moran's around the mean.
