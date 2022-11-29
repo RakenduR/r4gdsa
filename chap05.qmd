@@ -2,11 +2,11 @@
 title: "Geographical Segmentation with Spatially Constrained Clustering Techniques"
 date: "`r Sys.Date()`"
 format: html
+execute: 
+  warning: false
+  message: false
+  fig-retine: 3
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=TRUE, message=FALSE, warning = FALSE, fig.retina=3)
-```
 
 ## Overview
 
@@ -61,13 +61,9 @@ The R packages needed for this exercise are as follows:
 The code chunks below installs and launches these R packages into R environment.
 
 ```{r}
-packages = c('rgdal', 'spdep', 'tmap', 'sf', 'ggpubr', 'cluster', 'ClustGeo', 'factoextra', 'NbClust', 'heatmaply', 'corrplot', 'psych', 'tidyverse')
-for (p in packages){
-  if(!require(p, character.only = T)){
-    install.packages(p)
-    }
-  library(p,character.only = T)
-}
+pacman::p_load(rgdal, spdep, tmap, sf, 
+               ggpubr, cluster, factoextra, NbClust,
+               heatmaply, corrplot, psych, tidyverse)
 ```
 
 Note: With **tidyverse**, we do not have to install **readr**, **ggplot2** and **dplyr** packages separately. In fact, **tidyverse** also installs other very useful R packages such as **tidyr**.
@@ -817,5 +813,3 @@ shclust.map <- qtm(shan_sf_spatialcluster,
 tmap_arrange(hclust.map, shclust.map,
              asp=NA, ncol=2)
 ```
-
-
