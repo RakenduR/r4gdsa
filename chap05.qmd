@@ -61,7 +61,7 @@ The R packages needed for this exercise are as follows:
 The code chunks below installs and launches these R packages into R environment.
 
 ```{r}
-pacman::p_load(rgdal, spdep, tmap, sf, 
+pacman::p_load(rgdal, spdep, tmap, sf, ClustGeo, 
                ggpubr, cluster, factoextra, NbClust,
                heatmaply, corrplot, psych, tidyverse)
 ```
@@ -294,6 +294,7 @@ The code chunks below is used to perform the task. The unique identifier used to
 shan_sf <- left_join(shan_sf, 
                      ict_derived, 
                      by=c("TS_PCODE"="TS_PCODE"))
+write_rds(shan_sf, "chap05/data/rds/shan_sf.rds")
 ```
 
 The message above shows that *TS_CODE* field is the common field used to perform the left-join.
@@ -440,7 +441,8 @@ r <- ggplot(data=ict_derived,
              aes(x= `RADIO_PR`)) +
   geom_histogram(bins=20, 
                  color="black", 
-                 fill="light blue")
+                 fill="light blue") +
+  ggtitle("Raw values without standardisation")
 
 shan_ict_s_df <- as.data.frame(shan_ict.std)
 s <- ggplot(data=shan_ict_s_df, 
@@ -463,7 +465,37 @@ ggarrange(r, s, z,
           nrow = 1)
 ```
 
-Notice that the overall distribution of the clustering variables will change after the data standardisation. Hence, it is advisible **NOT** to perform data standardisation if the values range of the clustering variables are not very large.
+>What statistical conclusion can you draw from the histograms above? 
+
+```{r, fig.width=12, fig.height=4}
+
+r <- ggplot(data=ict_derived, 
+             aes(x= `RADIO_PR`)) +
+  geom_density(color="black",
+               fill="light blue") +
+  ggtitle("Raw values without standardisation")
+
+shan_ict_s_df <- as.data.frame(shan_ict.std)
+s <- ggplot(data=shan_ict_s_df, 
+       aes(x=`RADIO_PR`)) +
+  geom_density(color="black",
+               fill="light blue") +
+  ggtitle("Min-Max Standardisation")
+
+shan_ict_z_df <- as.data.frame(shan_ict.z)
+z <- ggplot(data=shan_ict_z_df, 
+       aes(x=`RADIO_PR`)) +
+  geom_density(color="black",
+               fill="light blue") +
+  ggtitle("Z-score Standardisation")
+
+ggarrange(r, s, z,
+          ncol = 3,
+          nrow = 1)
+```
+
+
+
 
 ### Computing proximity matrix
 
@@ -524,11 +556,11 @@ With reference to the output above, we can see that Ward's method provides the s
 
 Another technical challenge face by data analyst in performing clustering analysis is to determine the optimal clusters to retain.
 
-There are [three](https://www.datanovia.com/en/lessons/determining-the-optimal-number-of-clusters-3-must-know-methods/) commonly used methods to determine the optimal clusters, they are:
+There are [three](https://statweb.stanford.edu/~gwalther/gap) commonly used methods to determine the optimal clusters, they are:
 
 -   [Elbow Method](https://en.wikipedia.org/wiki/Elbow_method_(clustering))
 -   [Average Silhouette Method](https://www.sciencedirect.com/science/article/pii/0377042787901257?via%3Dihub)
--   [Gap Statistic Method](https://statweb.stanford.edu/~gwalther/gap)
+-   [Gap Statistic Method](http://www.web.stanford.edu/~hastie/Papers/gap.pdf)
 
 #### Gap Statistic Method
 
@@ -644,7 +676,7 @@ qtm(shan_sf_cluster, "CLUSTER")
 
 The choropleth map above reveals the clusters are very fragmented. The is one of the major limitation when non-spatial clustering algorithm such as hierarchical cluster analysis method is used.
 
-## Spatially Constrained Clustering - SKATER approach
+## Spatially Constrained Clustering: SKATER approach
 
 In this section, you will learn how to derive spatially constrained cluster by using [*skater()*](https://r-spatial.github.io/spdep/reference/skater.html) method of [**spdep**](https://r-spatial.github.io/spdep/index.html) package.
 
@@ -747,7 +779,7 @@ plot.mst(shan.mst,
 The code chunk below compute the spatially constrained cluster using [*skater()*](https://r-spatial.github.io/spdep/reference/skater.html) of **spdep** package.
 
 ```{r}
-clust6 <- skater(edges = shan.mst[,1:2], 
+clust6 <- spdep::skater(edges = shan.mst[,1:2], 
                  data = shan_ict, 
                  method = "euclidean", 
                  ncuts = 5)
@@ -812,4 +844,84 @@ shclust.map <- qtm(shan_sf_spatialcluster,
 
 tmap_arrange(hclust.map, shclust.map,
              asp=NA, ncol=2)
+```
+
+## Spatially Constrained Clustering: ClustGeo Method
+
+In this section, you will gain hands-on experience on using functions provided by **ClustGeo** package to perform non-spatially constrained hierarchical cluster analysis and spatially constrained cluster analysis.
+
+### Ward-like hierarchical clustering: ClustGeo 
+
+ClustGeo package provides function called `hclustgeo()` to perform a typical Ward-like hierarchical clustering just like `hclust()` you learned in previous section. 
+
+To perform non-spatially constrained hierarchical clustering, we only need to provide the function a dissimilarity matrix as shown in the code chunk below.
+
+```{r}
+nongeo_cluster <- hclustgeo(proxmat)
+plot(nongeo_cluster, cex = 0.5)
+rect.hclust(nongeo_cluster, 
+            k = 6, 
+            border = 2:5)
+```
+
+Note that the dissimilarity matrix must be an object of class `dist`, i.e. an object obtained with the function `dist()`. For sample code chunk, please refer to [5.7.6 Computing proximity matrix](https://r4gdsa.netlify.app/chap05.html#computing-proximity-matrix)
+
+#### Mapping the clusters formed
+
+Similarly, we can plot the clusters on a categorical area shaded map by using the steps we learned in 5.7.12 Mapping the clusters formed.
+
+```{r}
+groups <- as.factor(cutree(nongeo_cluster, k=6))
+```
+
+```{r}
+shan_sf_ngeo_cluster <- cbind(shan_sf, as.matrix(groups)) %>%
+  rename(`CLUSTER` = `as.matrix.groups.`)
+```
+
+```{r}
+qtm(shan_sf_ngeo_cluster, "CLUSTER")
+```
+
+
+### Spatially Constrained Hierarchical Clustering
+
+Before we can performed spatially constrained hierarchical clustering, a spatial distance matrix will be derived by using [`st_distance()`](https://r-spatial.github.io/sf/reference/geos_measures.html) of sf package.  
+
+```{r}
+dist <- st_distance(shan_sf, shan_sf)
+distmat <- as.dist(dist)
+```
+
+Notice that `as.dist()` is used to convert the data frame into matrix.
+
+Next, `choicealpha()` will be used to determine a suitable value for the mixing parameter alpha as shown in the code chunk below.
+
+```{r}
+cr <- choicealpha(proxmat, distmat, range.alpha = seq(0, 1, 0.1), K=6, graph = TRUE)
+```
+
+With reference to the graphs above, alpha = 0.3 will be used as shown in the code chunk below.
+
+```{r}
+clustG <- hclustgeo(proxmat, distmat, alpha = 0.3)
+```
+
+Next, `cutree()` is used to derive the cluster objecct. 
+
+```{r}
+groups <- as.factor(cutree(clustG, k=6))
+```
+
+We will then join back the group list with shan_sf polygon feature data frame by using the code chun below.
+
+```{r}
+shan_sf_Gcluster <- cbind(shan_sf, as.matrix(groups)) %>%
+  rename(`CLUSTER` = `as.matrix.groups.`)
+```
+
+We can not plot the map of the newly delineated spatially constrained clusters.
+
+```{r}
+qtm(shan_sf_Gcluster, "CLUSTER")
 ```
